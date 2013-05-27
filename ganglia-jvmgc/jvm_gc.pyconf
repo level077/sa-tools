@@ -1,0 +1,21 @@
+modules {
+  module {
+    name = "jvm_gc"
+    language = "python"
+  }
+}
+
+#/* Collection groups for the
+#    example python module */
+collection_group {
+  collect_every = 6
+  time_threshold = 6
+  metric {
+    name = "jvm_old_generation"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "jvm_perm_generation"
+    value_threshold = 1.0
+  }
+}
