@@ -1,0 +1,66 @@
+modules {
+  module {
+    name = "mysql"
+    language = "python"
+    param RefreshRate {
+        value = 2
+    }
+    param Host {
+        value = 192.168.0.201
+    }
+    param Port {
+	value = 3308	
+    }
+    param User {
+ 	value = xxxx	
+    }
+    param Password {
+ 	value = xxxxx
+    }
+  }
+}
+
+collection_group {
+  collect_every = 10
+  time_threshold = 20
+  metric {
+    name = "queries_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "select_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "update_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "delete_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "insert_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "created_tmp_disk_tables_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "created_tmp_files_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "created_tmp_tables_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "threads_connected"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "threads_running"
+    value_threshold = 1.0
+  }
+}
