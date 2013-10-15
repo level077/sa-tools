@@ -1,0 +1,66 @@
+modules {
+  module {
+    name = "mysql_3306"
+    language = "python"
+    param RefreshRate {
+        value = 2
+    }
+    param Host {
+        value = "192.168.0.200"
+    }
+    param Port {
+	value = "3306"	
+    }
+    param User {
+ 	value = "xxxx"	
+    }
+    param Password {
+ 	value = "xxxx"	
+    }
+  }
+}
+
+collection_group {
+  collect_every = 10
+  time_threshold = 20
+  metric {
+    name = "192.168.0.200_3306_queries_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "192.168.0.200_3306_select_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "192.168.0.200_3306_update_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "192.168.0.200_3306_delete_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "192.168.0.200_3306_insert_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "192.168.0.200_3306_created_tmp_disk_tables_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "192.168.0.200_3306_created_tmp_files_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "192.168.0.200_3306_created_tmp_tables_delta"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "192.168.0.200_3306_threads_connected"
+    value_threshold = 1.0
+  }
+  metric {
+    name = "192.168.0.200_3306_threads_running"
+    value_threshold = 1.0
+  }
+}
