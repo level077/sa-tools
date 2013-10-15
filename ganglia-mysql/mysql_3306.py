@@ -183,7 +183,10 @@ def metric_init(params):
     if 'Password' in params:
         _password = params['Password']
 
-    _cmd = "/usr/local/mysql/bin/mysql -u" + _user + " -h" + _host + " -P" + _port + " -p" + _password + " -e 'show global status'" 
+    if 'Mysql' in params:
+        _cmd = params['Mysql'] + " -u" + _user + " -h" + _host + " -P" + _port + " -p" + _password + " -e 'show global status'"
+    else:
+        _cmd = "/usr/local/mysql/bin/mysql -u" + _user + " -h" + _host + " -P" + _port + " -p" + _password + " -e 'show global status'"
     _metric_prefix = _host + "_" + _port + "_"
 
     _status = {_metric_prefix +'queries': 0,

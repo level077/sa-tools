@@ -17,6 +17,9 @@ modules {
     param Password {
  	value = "xxxx"	
     }
+    param Mysql {
+	value = "/usr/local/mysql/bin/mysql"	
+    }
   }
 }
 
