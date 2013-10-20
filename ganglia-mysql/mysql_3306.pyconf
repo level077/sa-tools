@@ -27,43 +27,8 @@ collection_group {
   collect_every = 10
   time_threshold = 20
   metric {
-    name = "192.168.0.200_3306_queries_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "192.168.0.200_3306_select_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "192.168.0.200_3306_update_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "192.168.0.200_3306_delete_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "192.168.0.200_3306_insert_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "192.168.0.200_3306_created_tmp_disk_tables_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "192.168.0.200_3306_created_tmp_files_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "192.168.0.200_3306_created_tmp_tables_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "192.168.0.200_3306_threads_connected"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "192.168.0.200_3306_threads_running"
+    name_match = "mysql_(.*)"
+    name = "mysql_\\1"
     value_threshold = 1.0
   }
 }

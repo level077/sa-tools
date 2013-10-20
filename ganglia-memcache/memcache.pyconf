@@ -1,0 +1,25 @@
+modules {
+  module {
+    name = "memcache
+    language = "python"
+    param RefreshRate {
+        value = 2
+    }
+    param Host {
+        value = "192.168.0.144"
+    }
+    param Port {
+	value = "11211"	
+    }
+  }
+}
+
+collection_group {
+  collect_every = 10
+  time_threshold = 20
+  metric {
+    name_match = "memcache_(.*)"
+    name = "memcache_\\1"
+    value_threshold = 1.0
+  }
+}

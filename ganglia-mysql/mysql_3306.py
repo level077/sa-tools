@@ -187,7 +187,7 @@ def metric_init(params):
         _cmd = params['Mysql'] + " -u" + _user + " -h" + _host + " -P" + _port + " -p" + _password + " -e 'show global status'"
     else:
         _cmd = "/usr/local/mysql/bin/mysql -u" + _user + " -h" + _host + " -P" + _port + " -p" + _password + " -e 'show global status'"
-    _metric_prefix = _host + "_" + _port + "_"
+    _metric_prefix = "mysql_"_host + "_" + _port + "_"
 
     _status = {_metric_prefix +'queries': 0,
         _metric_prefix +'queries_delta':0,
