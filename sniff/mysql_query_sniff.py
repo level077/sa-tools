@@ -136,7 +136,7 @@ if __name__=='__main__':
 
     if len(sys.argv) < 3:
         print 'usage: mysql_query_sniff.py <interface> <expr>'
-	print 'eg:python ./mysql_query_sniff.py em1 dst 3306'
+	print 'eg:python mysql_query_sniff.py em1 dst 3306'
         sys.exit(0)
     p = pcap.pcapObject()
     #dev = pcap.lookupdev()
