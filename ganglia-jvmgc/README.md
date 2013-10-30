@@ -1,2 +1,1 @@
-ganglia jvm gc监控模块。
-注意：ganglia进程必须和tomcat跑在同一用户下
+注意：因为取pid时使用的是netstat，所以如果ganglia进程和java进程不是同一个用户在跑，则无法取到java pid。

@@ -2,20 +2,26 @@ modules {
   module {
     name = "jvm_gc"
     language = "python"
+    param RefreshRate {
+        value = 2
+    }
+    param JAVA_HOME {
+        value = "/usr/local/jdk1.6.0_32"
+    }
+    param Port {
+        value = "8110"
+    }
   }
 }
 
 #/* Collection groups for the
 #    example python module */
 collection_group {
-  collect_every = 6
-  time_threshold = 6
+  collect_every = 10
+  time_threshold = 20
   metric {
-    name = "jvm_old_generation"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "jvm_perm_generation"
-    value_threshold = 1.0
+    	name_match = "JVMGC_(.*)"
+    	name = "JVMGC_\\1"
+    	value_threshold = 0.1
   }
 }
