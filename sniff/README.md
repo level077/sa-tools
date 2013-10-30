@@ -2,7 +2,9 @@ python 抓包模块，作为python编程的练手。
 
 安装：
 cd pylibpcap-0.6.4
+
 python ./setup.py install
+
 note:确保已经安装了libpcap包，否则代码执行会报错。
 
 
