@@ -155,21 +155,7 @@ if __name__=='__main__':
         while 1:
             p.dispatch(1, print_packet)
 
-        # specify 'None' to dump to dumpfile, assuming you have called
-        # the dump_open method
-        #    p.dispatch(0, None)
-
-        # the loop method is another way of doing things
-        #    p.loop(1, print_packet)
-
-        # as is the next() method
-        # p.next() returns a (pktlen, data, timestamp) tuple 
-        #    apply(print_packet,p.next())
     except KeyboardInterrupt:
         print '%s' % sys.exc_type
         print 'shutting down'
         print '%d packets received, %d packets dropped, %d packets dropped by interface' % p.stats()
-    
-
-
-# vim:set ts=4 sw=4 et:
