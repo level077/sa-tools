@@ -1,12 +1,15 @@
 python 抓包模块，作为python编程的练手。
 
 安装：
+
 cd pylibpcap-0.6.4
 
 python ./setup.py install
 
 note:确保已经安装了libpcap包，否则代码执行会报错。
 
+
+sniff.py:抓取基本的tcp包，适合http的抓取
 
 memkeys.py:抓取memcache包，打印请求并将key及请求次数输出到文件/tmp/memkeys.log
 
