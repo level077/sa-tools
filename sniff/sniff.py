@@ -11,8 +11,6 @@ import time
 import socket
 import struct
 
-rtt = {}
-
 protocols={socket.IPPROTO_TCP:'tcp',
             socket.IPPROTO_UDP:'udp',
             socket.IPPROTO_ICMP:'icmp'}
@@ -62,12 +60,6 @@ def decode_tcp_packet(s):
     d['data'] = s[4*d['header_len']:]
     return d
 
-def dumphex(s):
-    bytes = map(lambda x: '%.2x' % x, map(ord, s))
-    for i in xrange(0,len(bytes)/16):
-        print '        %s' % string.join(bytes[i*16:(i+1)*16],' ')
-    print '        %s' % string.join(bytes[(i+1)*16:],' ')
-
 def print_packet(pktlen, data, timestamp):
     if not data:
         return
@@ -83,26 +75,17 @@ def print_packet(pktlen, data, timestamp):
 				tcp_decoded["sport"],
                                 decoded['destination_address'],
 				tcp_decoded["dport"])
-           for key in ['version', 'header_len', 'tos', 'total_len', 'id',
-                                'flags', 'fragment_offset', 'ttl']:
-            print '    %s: %d' % (key, decoded[key])
-           print '    header checksum: %d' % decoded['checksum']
-           print '    protocol: %s' % protocols[decoded['protocol']]
-        #print '    data:'
-        #dumphex(decoded['data'])
-           print '         seq: %s' % tcp_decoded['seq']
-           print '         acknowledge: %s' % tcp_decoded['acknowlege']
-           print '         header len: %d' % tcp_decoded['header_len']
-           for key in ['sign','URG','ACK','PSH','RST','SYN','FIN']:
- 	       print '         %s: %d' % (key,tcp_decoded[key])
-           print '         window size: %d' % tcp_decoded['window']
-           print '         checksum: %d' % tcp_decoded['checksum']
-           print '         URG POINT: %d' % tcp_decoded['URG_POINT']
+    	   print 'seq:%d' % tcp_decoded["seq"]
+           print 'acknowlege:%d' % tcp_decoded["acknowlege"]
+           print 'URG:%d  ACK:%d  PSH:%d  RST:%d  SYN:%d  FIN:%d' % (tcp_decoded["URG"],tcp_decoded["ACK"],tcp_decoded["PSH"],tcp_decoded["RST"],tcp_decoded["SYN"],tcp_decoded["FIN"])
+           print 'header length:%d' % tcp_decoded["header_len"]
+           print 'window size:%d' % tcp_decoded["window"]
+           if tcp_decoded["options"]:
+               print "%s" % tcp_decoded["options"]
+           print 'checksum:%d' % tcp_decoded["checksum"]
 	   print repr(tcp_decoded['data'])
-            
 
 if __name__=='__main__':
-
     if len(sys.argv) < 3:
         print 'usage: sniff.py <interface> <expr>'
         sys.exit(0)
@@ -123,21 +106,7 @@ if __name__=='__main__':
         while 1:
             p.dispatch(1, print_packet)
 
-        # specify 'None' to dump to dumpfile, assuming you have called
-        # the dump_open method
-        #    p.dispatch(0, None)
-
-        # the loop method is another way of doing things
-        #    p.loop(1, print_packet)
-
-        # as is the next() method
-        # p.next() returns a (pktlen, data, timestamp) tuple 
-        #    apply(print_packet,p.next())
     except KeyboardInterrupt:
         print '%s' % sys.exc_type
         print 'shutting down'
         print '%d packets received, %d packets dropped, %d packets dropped by interface' % p.stats()
-    
-
-
-# vim:set ts=4 sw=4 et:

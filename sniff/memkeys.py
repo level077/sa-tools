@@ -273,11 +273,4 @@ if __name__=='__main__':
         #    apply(print_packet,p.next())
     except KeyboardInterrupt:
 	workthread.shutdown()
-        #print '%s' % sys.exc_type
-        #print 'shutting down'
-        #print '%d packets received, %d packets dropped, %d packets dropped by interface' % p.stats()
 	sys.exit(0)
-    
-
-
-# vim:set ts=4 sw=4 et:
