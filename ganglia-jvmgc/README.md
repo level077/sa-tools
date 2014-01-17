@@ -11,15 +11,12 @@ modules {
     param RefreshRate {
         value = 5          #刷新间隔，这里设置的是5秒
     }
-
     param JAVA_HOME {
         value = "/usr/local/jdk1.6.0_32"      #JAVA_HOME目录，用来寻找到jstat命令，必须
     }
-
     param Port {
         value = "8110"                        #端口号，用于在ganglia分图形分组，必须
     }
-
     param PID_CMD {
         value = "ps xau  | grep java | grep -v grep  | grep _8110 | awk '{print $2}'"    #用于找出唯一PID的shell命令,必须
     }

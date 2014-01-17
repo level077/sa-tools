@@ -11,7 +11,6 @@ modules {
     param Port {
         value = "8110"
     }
-
     param PID_CMD {
 	value = "ps xau  | grep java | grep -v grep  | grep _8110 | awk '{print $2}'"
     }

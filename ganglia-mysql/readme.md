@@ -1,6 +1,7 @@
 mysql 监控,目前主要监控select，insert，update，delete，create_tmp_table，create_tmp_disk_table，Threads_running等一些重要参数。
 
 -----------------------------------部分配置说明---------------------------
+<pre><code>
 modules {
   module {
     name = "mysql"           #模块名
@@ -22,4 +23,4 @@ modules {
     }
   }
 }
-
+<pre><code>
