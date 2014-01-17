@@ -80,8 +80,8 @@ def print_packet(pktlen, data, timestamp):
            print 'URG:%d  ACK:%d  PSH:%d  RST:%d  SYN:%d  FIN:%d' % (tcp_decoded["URG"],tcp_decoded["ACK"],tcp_decoded["PSH"],tcp_decoded["RST"],tcp_decoded["SYN"],tcp_decoded["FIN"])
            print 'header length:%d' % tcp_decoded["header_len"]
            print 'window size:%d' % tcp_decoded["window"]
-           if tcp_decoded["options"]:
-               print "%s" % tcp_decoded["options"]
+           #if tcp_decoded["options"]:
+           #    print "%s" % tcp_decoded["options"]
            print 'checksum:%d' % tcp_decoded["checksum"]
 	   print repr(tcp_decoded['data'])
 

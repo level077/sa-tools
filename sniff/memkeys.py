@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 """
-Example to sniff all HTTP traffic on eth0 interface:
-    sudo ./sniff.py eth0 "port 80"
+Example to sniff all memcached traffic on eth0 interface:
+    sudo ./sniff.py eth0 port 11211
 """
 
 import sys
@@ -222,8 +222,6 @@ class memThread(threading.Thread):
 	self.running = True
 	while self.running:
 	    p.dispatch(1,print_packet) 
-	#for (k,v) in memstat.items():
-	#    print "%s	%d" % (k,v)
 	f  = file('/tmp/memkeys.log','w')
 	for item in sorted(memstat.iteritems(), key=lambda pair: pair[1], reverse=True):
 		line = "%s	%d\n" % item
@@ -237,40 +235,20 @@ class memThread(threading.Thread):
 if __name__=='__main__':
 
     if len(sys.argv) < 3:
-        print 'usage: sniff.py <interface> <expr>'
+        print 'usage: python memkeys.py <interface> <expr>'
         sys.exit(0)
     p = pcap.pcapObject()
-    #dev = pcap.lookupdev()
     dev = sys.argv[1]
     net, mask = pcap.lookupnet(dev)
-    # note:    to_ms does nothing on linux
     p.open_live(dev, 1600, 0, 100)
-    #p.dump_open('dumpfile')
     p.setfilter(string.join(sys.argv[2:],' '), 0, 0)
     
     workthread = memThread()
     workthread.start()
-    # try-except block to catch keyboard interrupt.    Failure to shut
-    # down cleanly can result in the interface not being taken out of promisc.
-    # mode
-    #p.setnonblock(1)
     try:
         while 1:
-	    #for (k,v) in memstat.items():
-	    #    print "%s	%d" % (k,v)
-		#print "---------\n"
 		time.sleep(1)	
 
-        # specify 'None' to dump to dumpfile, assuming you have called
-        # the dump_open method
-        #    p.dispatch(0, None)
-
-        # the loop method is another way of doing things
-        #    p.loop(1, print_packet)
-
-        # as is the next() method
-        # p.next() returns a (pktlen, data, timestamp) tuple 
-        #    apply(print_packet,p.next())
     except KeyboardInterrupt:
 	workthread.shutdown()
 	sys.exit(0)

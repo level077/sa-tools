@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 """
-Example to sniff all HTTP traffic on eth0 interface:
-    sudo ./sniff.py eth0 "port 80"
+Example to sniff all mysql traffic on eth0 interface:
+    sudo ./mysql_query_sniff.py eth0 dst port 3306
 """
 
 import sys
@@ -139,18 +139,11 @@ if __name__=='__main__':
 	print 'eg:python mysql_query_sniff.py em1 dst 3306'
         sys.exit(0)
     p = pcap.pcapObject()
-    #dev = pcap.lookupdev()
     dev = sys.argv[1]
     net, mask = pcap.lookupnet(dev)
-    # note:    to_ms does nothing on linux
     p.open_live(dev, 1600, 0, 100)
-    #p.dump_open('dumpfile')
     p.setfilter(string.join(sys.argv[2:],' '), 0, 0)
 
-    # try-except block to catch keyboard interrupt.    Failure to shut
-    # down cleanly can result in the interface not being taken out of promisc.
-    # mode
-    #p.setnonblock(1)
     try:
         while 1:
             p.dispatch(1, print_packet)
