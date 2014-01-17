@@ -1,15 +1,19 @@
 modules {
   module {
-    name = "jvm_gc"
+    name = "jvm_gc_8110"
     language = "python"
     param RefreshRate {
-        value = 2
+        value = 5
     }
     param JAVA_HOME {
         value = "/usr/local/jdk1.6.0_32"
     }
     param Port {
         value = "8110"
+    }
+
+    param PID_CMD {
+	value = "ps xau  | grep java | grep -v grep  | grep _8110 | awk '{print $2}'"
     }
   }
 }

@@ -1,5 +1,25 @@
-mysql 监控
+mysql 监控,目前主要监控select，insert，update，delete，create_tmp_table，create_tmp_disk_table，Threads_running等一些重要参数。
 
-1.如果只跑单实例，mysql.py可以了
+-----------------------------------部分配置说明---------------------------
+modules {
+  module {
+    name = "mysql"           #模块名
+    language = "python"
+    param RefreshRate {
+        value = 2            #刷新频率
+    }
+    param Host {
+        value = 192.168.0.201 #mysql服务器IP
+    }
+    param Port {
+        value = 3308          #mysql 端口
+    }
+    param User {
+        value = xxxx          #mysql user 需要有processlist权限
+    }
+    param Password {
+        value = xxxxx
+    }
+  }
+}
 
-2.多实例的情况，复制mysql_3306.py到其他文件，如监控3308端口，则 cp mysql_3306.py mysql_3308.py,同时修改对应的配置文件mysql_3308.pyonf

@@ -20,8 +20,6 @@ _cmd = None
 _metric_prefix =None
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
-#Global dictionary storing the counts of the last mysql status
-# read from the show global status output
 _status = {}
 
 def memcache_status(name):
@@ -38,10 +36,6 @@ def memcache_status(name):
         except (AssertionError, RuntimeError):
             pass
 
-    #Read the last status for the state requested. The metric
-    # name passed in matches the dictionary slot for the state value.
-
-    #ignore the first mysql status
     if _WorkerThread.num < 2:
         return 0
     _glock.acquire()
@@ -57,9 +51,6 @@ def create_desc(skel,prop):
     return d
 
 class NetstatThread(threading.Thread):
-    '''This thread continually gathers the current states of the tcp socket
-    connections on the machine.  The refresh rate is controlled by the 
-    RefreshRate parameter that is passed in through the gmond.conf file.'''
 
     def __init__(self):
         threading.Thread.__init__(self)
@@ -86,12 +77,8 @@ class NetstatThread(threading.Thread):
             if self.shuttingdown:
                 break
             
-	    #sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    	    #sock.connect((_host,int(_port)))
             sock.send('stats\r\n')
 	    lines = sock.recv(2048).split("\r\n")
-           # sock.send('quit\r\n')
-	    #sock.close()
             #Iterate through the netstat output looking for the 'tcp' keyword in the tcp_at 
             # position and the state information in the tcp_state_at position. Count each 
             # occurance of each state.
@@ -143,8 +130,6 @@ class NetstatThread(threading.Thread):
         self.running = False
 
 def metric_init(params):
-    '''Initialize the tcp connection status module and create the
-    metric definition dictionary object for each metric.'''
     global sock,_metric_prefix, _refresh_rate, _WorkerThread, _host, _port, _status,descriptors
     
     #Read the refresh_rate from the gmond.conf parameters.

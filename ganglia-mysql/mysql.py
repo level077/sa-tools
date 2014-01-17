@@ -211,7 +211,7 @@ def metric_init(params):
         'units'       : 'XXX',
         'slope'       : 'both', # zero|positive|negative|both
         'description' : 'XXX',
-        'groups'      : 'mysql '+ _host + '_' + _port,
+        'groups'      : 'mysql_'+ _host + '_' + _port,
         }
 
     descriptors.append(create_desc(Desc_Skel,{

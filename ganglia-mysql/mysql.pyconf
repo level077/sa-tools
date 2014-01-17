@@ -23,44 +23,7 @@ modules {
 collection_group {
   collect_every = 10
   time_threshold = 20
-  metric {
-    name = "queries_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "select_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "update_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "delete_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "insert_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "created_tmp_disk_tables_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "created_tmp_files_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "created_tmp_tables_delta"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "threads_connected"
-    value_threshold = 1.0
-  }
-  metric {
-    name = "threads_running"
-    value_threshold = 1.0
-  }
+  name_match = "mysql_(.*)"
+  name = "mysql_\\1"
+  value_threshold = 1.0
 }
