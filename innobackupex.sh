@@ -78,7 +78,8 @@ process_log="$target/back_process.log"
 func_fullbackup ()
 {
 	#-----------------mv when full_back exist-------
-	[ -d "$dir_full" ] && echo "mv $dir_full" && mv $dir_full ${dir_full}.bak >> $error_log 2>&1 
+	[ -d ${dir_full}.bak ] && rm -rf ${dir_full}.bak >> $error_log 2>&1
+	[ -d "$dir_full" ] && mv $dir_full ${dir_full}.bak >> $error_log 2>&1 
 
 	#---------------start backup--------------------
 	echo "`date`	$host:$port full_backup start" >> $backup_log 2>&1
@@ -105,7 +106,8 @@ func_fullbackup ()
 func_increment ()
 {
 	#-----------------mv when increment_back exist-------
-        [ -d "$dir_incre" ] && echo "mv $dir_incre" && mv $dir_incre ${dir_incre}.bak >> $error_log 2>&1
+	[ -d ${dir_incre}.bak ] && rm -rf ${dir_incre}.bak >> $error_log 2>&1
+        [ -d "$dir_incre" ] && mv $dir_incre ${dir_incre}.bak >> $error_log 2>&1
 
 	#---------------start backup--------------------
 	last_lsn=`awk -F '[= ]' '/to_lsn/ {print $NF}' $dir_full/xtrabackup_checkpoints`
