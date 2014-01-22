@@ -110,6 +110,7 @@ func_increment ()
         [ -d "$dir_incre" ] && mv $dir_incre ${dir_incre}.bak >> $error_log 2>&1
 
 	#---------------start backup--------------------
+	[ !-f $dir_full/xtrabackup_checkpoints ] && echo "can't find $dir_full/xtrabackup_checkpoints" >> $error_log 2>&1
 	last_lsn=`awk -F '[= ]' '/to_lsn/ {print $NF}' $dir_full/xtrabackup_checkpoints`
         echo "`date`    $host:$port incremental backup start,full backup last lsn:$last_lsn" >> $backup_log 2>&1
 	
