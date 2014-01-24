@@ -120,7 +120,7 @@ func_increment ()
 	then
 		echo "`date`    $host:$port incremental backup prepare,full backup last lsn:$last_lsn" >> $backup_log 2>&1
 		innobackupex --defaults-file=$config --apply-log --redo-only --use-memory 4G $dir_full --incremental-dir=$dir_incre >> $process_log 2>&1
-		if [ $? -ne 0]
+		if [ $? -ne 0 ]
 		then
 			 echo "`date`    $host:$port innobackupex incremental prepare error" 
 			exit
