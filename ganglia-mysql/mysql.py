@@ -38,7 +38,13 @@ _status = {'queries': 0,
 	'created_tmp_tables':0,
 	'created_tmp_tables_delta':0,
         'threads_connected': 0,
-        'threads_running':0}
+        'threads_running':0,
+	'innodb_pool_read_hit':0,
+	'innodb_pool_read_hit_delta':0,
+	'innodb_pool_read_requests':0,
+	'innodb_pool_read_requests_delta':0,
+	'innodb_pool_reads':0,
+	'innodb_pool_reads_delta':0}
 
 def mysql_status(name):
     '''Return the mysql status.'''
@@ -61,7 +67,7 @@ def mysql_status(name):
     if _WorkerThread.num < 2:
         return 0
     _glock.acquire()
-    ret = int(_status[name])
+    ret = float(_status[name])
     _glock.release()
     return ret
 
@@ -158,6 +164,15 @@ class NetstatThread(threading.Thread):
                     tempstatus['threads_connected'] = line[1]
                 elif line[0] == 'Threads_running':
                     tempstatus['threads_running'] = line[1]
+		elif line[0] == 'Innodb_buffer_pool_read_requests':
+                    tempstatus['innodb_pool_read_requests'] = line[1]
+                    tempstatus['innodb_pool_read_requests_delta'] = int(line[1]) - int(_status['innodb_pool_read_requests'])
+                elif line[0] == 'Innodb_buffer_pool_reads':
+                    tempstatus['innodb_pool_reads'] = line[1]
+                    tempstatus['innodb_pool_reads_delta'] = int(line[1]) - int(_status['innodb_pool_reads'])
+
+            tempstatus['innodb_pool_read_hit'] = 1 - float(tempstatus['innodb_pool_reads'])/float(tempstatus['innodb_pool_read_requests'])
+            tempstatus['innodb_pool_read_hit_delta'] = 1 - float(tempstatus['innodb_pool_reads_delta'])/float(tempstatus['innodb_pool_read_requests_delta'])
                         
             #Acquire a lock and copy the temporary status dictionary
             # to the global status dictionary.
@@ -206,8 +221,8 @@ def metric_init(params):
         'name'        : 'XXX',
         'call_back'   : mysql_status,
         'time_max'    : 30,
-        'value_type'  : 'uint',
-        'format'      : '%u',
+        'value_type'  : 'float',
+        'format'      : '%.3f',
         'units'       : 'XXX',
         'slope'       : 'both', # zero|positive|negative|both
         'description' : 'XXX',
@@ -264,6 +279,16 @@ def metric_init(params):
                         'units': 'count',
                         'description': 'threads_running',
                         }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': 'innodb_pool_read_hit',
+                        'units': '%',
+                        'description': 'innodb_pool_read_hit',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': 'innodb_pool_read_hit_delta',
+                        'units': '%',
+                        'description': 'innodb_pool_read_hit_delta',
+                        }))
     
     #Start the worker thread
     _WorkerThread = NetstatThread()
@@ -285,7 +310,7 @@ if __name__ == '__main__':
         try:
             for d in descriptors:
                 v = d['call_back'](d['name'])
-                print 'value for %s is %u' % (d['name'],  v)
+                print 'value for %s is %.3f' % (d['name'],  v)
             time.sleep(2)
         except KeyboardInterrupt:
             os._exit(1)
