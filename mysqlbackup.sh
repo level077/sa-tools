@@ -35,8 +35,8 @@ MM=`date -d -1hour +%m`
 DD=`date -d -1hour +%d`
 backup_dir="/backup2/mysql_backup/$YY/$MM"
 [ ! -d "$backup_dir" ] && mkdir -p $backup_dir
-user="backup"
-passwd="enQhqIehZqCYYjndWiuq"
+user="xxxx"
+passwd="xxxx"
 sql_file="$backup_dir/$host-$port-$YY-$MM-$DD.sql"
 
 #-----------------exit when sql exist-------

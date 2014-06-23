@@ -65,8 +65,8 @@ then
 	exit
 fi
 #-----------------init-----------------
-user="backup"
-passwd="enQhqIehZqCYYjndWiuq"
+user="xxx"
+passwd="xxxx"
 
 [ ! -d "$target" ] && mkdir -p $target
 dir_full="$target/full_back"
