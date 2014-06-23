@@ -10,10 +10,10 @@ modules {
         value = 2            #刷新频率
     }
     param Host {
-        value = 192.168.0.201 #mysql服务器IP
+        value = 192.168.10.1 #mysql服务器IP
     }
     param Port {
-        value = 3308          #mysql 端口
+        value = 3306          #mysql 端口
     }
     param User {
         value = xxxx          #mysql user 需要有processlist权限
