@@ -6,7 +6,7 @@ modules {
         value = 2
     }
     param Host {
-        value = "192.168.0.144"
+        value = "192.168.10.1"
     }
     param Port {
 	value = "11211"	

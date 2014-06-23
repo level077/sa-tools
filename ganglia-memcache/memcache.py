@@ -232,7 +232,7 @@ def metric_cleanup():
 
 #This code is for debugging and unit testing    
 if __name__ == '__main__':
-    params = {'RefreshRate': '2','Host':'192.168.0.144',"Port":"11211"}
+    params = {'RefreshRate': '2','Host':'192.168.10.1',"Port":"11211"}
     metric_init(params)
     while True:
         try:
