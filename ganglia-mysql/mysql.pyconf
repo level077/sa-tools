@@ -6,10 +6,10 @@ modules {
         value = 2
     }
     param Host {
-        value = 192.168.0.201
+        value = 192.168.10.1
     }
     param Port {
-	value = 3308	
+	value = 3306
     }
     param User {
  	value = xxxx	

@@ -304,7 +304,7 @@ def metric_cleanup():
 
 #This code is for debugging and unit testing    
 if __name__ == '__main__':
-    params = {'RefreshRate': '2','Host':'192.168.0.201',"Port":"3308","User":"xxxx","Password":"xxxxx"}
+    params = {'RefreshRate': '2','Host':'192.168.10.1',"Port":"3306","User":"xxxx","Password":"xxxxx"}
     metric_init(params)
     while True:
         try:
