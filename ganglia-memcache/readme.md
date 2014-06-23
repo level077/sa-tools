@@ -10,7 +10,7 @@ modules {
         value = 2        #刷新频率，这里是2秒
     }
     param Host {
-        value = "192.168.0.144"   #memcached服务器IP
+        value = "192.168.10.1"   #memcached服务器IP
     }
     param Port {
         value = "11211"     #memcached 端口
