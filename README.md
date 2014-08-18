@@ -19,3 +19,7 @@ mysqlbackup.sh
 numa.pl
 -------------
 * 查看某进程内存节点的分布情况，如cat /proc/[mysql pid]/numa_maps | perl numa.pl
+
+rename_db.sh
+-------------
+* 两个库之间的rename操作脚本
