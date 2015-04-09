@@ -62,6 +62,7 @@ class NetstatThread(threading.Thread):
 	    _status[_metric_prefix + "jvm_old"] = lines.split()[3]
 	    _status[_metric_prefix + "jvm_perm"] = lines.split()[4]
 	    _status[_metric_prefix + "jvm_full_gc"] = lines.split()[7]
+            _status[_metric_prefix + "jvm_ygc"] = lines.split()[5]
             _glock.release()
             
             #Wait for the refresh_rate period before collecting the netstat data again.
@@ -91,7 +92,8 @@ def metric_init(params):
 
     _status = {_metric_prefix +'jvm_perm': 0,
         _metric_prefix + 'jvm_old':0,
-        _metric_prefix + 'jvm_full_gc':0}
+        _metric_prefix + 'jvm_full_gc':0,
+	_metric_prefix + 'jvm_ygc':0}
 
 
     #create descriptors
@@ -123,6 +125,11 @@ def metric_init(params):
                         'name': _metric_prefix + 'jvm_full_gc',
                         'units': 'count',
                         'description': 'jvm full gc',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'jvm_ygc',
+                        'units': 'count',
+                        'description': 'jvm young gc',
                         }))
     #Start the worker thread
     _WorkerThread = NetstatThread()
