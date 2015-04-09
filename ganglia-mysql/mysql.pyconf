@@ -1,21 +1,24 @@
 modules {
   module {
-    name = "mysql"
+    name = "mysql_33061"
     language = "python"
     param RefreshRate {
         value = 2
     }
     param Host {
-        value = 192.168.10.1
+        value = "10.3.1.58"
     }
     param Port {
-	value = 3306
+	value = "33061"	
     }
     param User {
- 	value = xxxx	
+ 	value = "monitor"	
     }
     param Password {
- 	value = xxxxx
+ 	value = "monitor"	
+    }
+    param Mysql {
+	value = "/usr/local/mysql/bin/mysql"	
     }
   }
 }
@@ -23,7 +26,9 @@ modules {
 collection_group {
   collect_every = 10
   time_threshold = 20
-  name_match = "mysql_(.*)"
-  name = "mysql_\\1"
-  value_threshold = 1.0
+  metric {
+    name_match = "mysql_(.*)"
+    name = "mysql_\\1"
+    value_threshold = 1.0
+  }
 }

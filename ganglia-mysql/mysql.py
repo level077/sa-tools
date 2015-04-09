@@ -16,42 +16,19 @@ _refresh_rate = 10 #Refresh rate of the netstat data
 _host = None
 _port = None
 _user = None
-_port = None
 _cmd = None
+_metric_prefix =None
 
 #Global dictionary storing the counts of the last mysql status
 # read from the show global status output
-_status = {'queries': 0,
-	'queries_delta':0,
-	'insert':0,
-	'insert_delta':0,
-	'select':0,
-	'select_delta':0,
-	'update':0,
-	'update_delta':0,
-	'delete':0,
-	'delete_delta':0,
-	'created_tmp_disk_tables':0,
-	'created_tmp_disk_tables_delta':0,
-	'created_tmp_files':0,
-	'created_tmp_files_delta':0,
-	'created_tmp_tables':0,
-	'created_tmp_tables_delta':0,
-        'threads_connected': 0,
-        'threads_running':0,
-	'innodb_pool_read_hit':0,
-	'innodb_pool_read_hit_delta':0,
-	'innodb_pool_read_requests':0,
-	'innodb_pool_read_requests_delta':0,
-	'innodb_pool_reads':0,
-	'innodb_pool_reads_delta':0}
+_status = {}
 
 def mysql_status(name):
     '''Return the mysql status.'''
     global _WorkerThread
    
     if _WorkerThread is None:
-        print 'Error: No netstat data gathering thread created for metric %s' % name
+        print 'Error: No mysql data gathering thread created for metric %s' % name
         return 0
         
     if not _WorkerThread.running and not _WorkerThread.shuttingdown:
@@ -67,7 +44,7 @@ def mysql_status(name):
     if _WorkerThread.num < 2:
         return 0
     _glock.acquire()
-    ret = float(_status[name])
+    ret = int(_status[name])
     _glock.release()
     return ret
 
@@ -79,9 +56,9 @@ def create_desc(skel,prop):
     return d
 
 class NetstatThread(threading.Thread):
-    '''This thread continually gathers the current states of the tcp socket
-    connections on the machine.  The refresh rate is controlled by the 
-    RefreshRate parameter that is passed in through the gmond.conf file.'''
+    '''This thread continually gathers the current states of the mysql status
+    on the machine.  The refresh rate is controlled by the RefreshRate parameter 
+    that is passed in through the gmond.conf file.'''
 
     def __init__(self):
         threading.Thread.__init__(self)
@@ -129,7 +106,9 @@ class NetstatThread(threading.Thread):
                 if e.errno == 10: # No child process
                     continue
             
-            #Iterate through the show global status output 
+            #Iterate through the netstat output looking for the 'tcp' keyword in the tcp_at 
+            # position and the state information in the tcp_state_at position. Count each 
+            # occurance of each state.
             for status in lines:
                 # skip empty lines
                 if status == '':
@@ -137,50 +116,42 @@ class NetstatThread(threading.Thread):
 
                 line = status.split()
                 if line[0] == 'Queries':
-                    tempstatus['queries'] = line[1]
-		    tempstatus['queries_delta'] = (int(line[1])- int(_status['queries']))/_refresh_rate
+                    tempstatus[_metric_prefix + 'queries'] = line[1]
+		    tempstatus[_metric_prefix + 'queries_delta'] = (int(line[1])- int(_status[_metric_prefix + 'queries']))/_refresh_rate
    		elif line[0] == 'Com_select':
-		    tempstatus['select'] = line[1]
-		    tempstatus['select_delta'] = (int(line[1])- int(_status['select']))/_refresh_rate
+		    tempstatus[_metric_prefix + 'select'] = line[1]
+		    tempstatus[_metric_prefix + 'select_delta'] = (int(line[1])- int(_status[_metric_prefix + 'select']))/_refresh_rate
           	elif line[0] == 'Com_insert':
-                    tempstatus['insert'] = line[1]
-                    tempstatus['insert_delta'] = (int(line[1])- int(_status['insert']))/_refresh_rate
+                    tempstatus[_metric_prefix + 'insert'] = line[1]
+                    tempstatus[_metric_prefix + 'insert_delta'] = (int(line[1])- int(_status[_metric_prefix + 'insert']))/_refresh_rate
 		elif line[0] == 'Com_update':
-                    tempstatus['update'] = line[1]
-                    tempstatus['update_delta'] = (int(line[1])- int(_status['update']))/_refresh_rate
+                    tempstatus[_metric_prefix + 'update'] = line[1]
+                    tempstatus[_metric_prefix + 'update_delta'] = (int(line[1])- int(_status[_metric_prefix + 'update']))/_refresh_rate
 		elif line[0] == 'Com_delete':
-                    tempstatus['delete'] = line[1]
-                    tempstatus['delete_delta'] = (int(line[1])- int(_status['delete']))/_refresh_rate
+                    tempstatus[_metric_prefix + 'delete'] = line[1]
+                    tempstatus[_metric_prefix + 'delete_delta'] = (int(line[1])- int(_status[_metric_prefix + 'delete']))/_refresh_rate
 		elif line[0] == 'Created_tmp_disk_tables':
-                    tempstatus['created_tmp_disk_tables'] = line[1]
-                    tempstatus['created_tmp_disk_tables_delta'] = (int(line[1])- int(_status['created_tmp_disk_tables']))/_refresh_rate
+                    tempstatus[_metric_prefix + 'created_tmp_disk_tables'] = line[1]
+                    tempstatus[_metric_prefix + 'created_tmp_disk_tables_delta'] = (int(line[1])- int(_status[_metric_prefix + 'created_tmp_disk_tables']))/_refresh_rate
 		elif line[0] == 'Created_tmp_files':
-                    tempstatus['created_tmp_files'] = line[1]
-                    tempstatus['created_tmp_files_delta'] = (int(line[1])- int(_status['created_tmp_files']))/_refresh_rate
+                    tempstatus[_metric_prefix + 'created_tmp_files'] = line[1]
+                    tempstatus[_metric_prefix + 'created_tmp_files_delta'] = (int(line[1])- int(_status[_metric_prefix + 'created_tmp_files']))/_refresh_rate
 		elif line[0] == 'Created_tmp_tables':
-                    tempstatus['created_tmp_tables'] = line[1]
-                    tempstatus['created_tmp_tables_delta'] = (int(line[1])- int(_status['created_tmp_tables']))/_refresh_rate
+                    tempstatus[_metric_prefix + 'created_tmp_tables'] = line[1]
+                    tempstatus[_metric_prefix + 'created_tmp_tables_delta'] = (int(line[1])- int(_status[_metric_prefix + 'created_tmp_tables']))/_refresh_rate
                 elif line[0] == 'Threads_connected':
-                    tempstatus['threads_connected'] = line[1]
+                    tempstatus[_metric_prefix + 'threads_connected'] = line[1]
                 elif line[0] == 'Threads_running':
-                    tempstatus['threads_running'] = line[1]
-		elif line[0] == 'Innodb_buffer_pool_read_requests':
-                    tempstatus['innodb_pool_read_requests'] = line[1]
-                    tempstatus['innodb_pool_read_requests_delta'] = int(line[1]) - int(_status['innodb_pool_read_requests'])
-                elif line[0] == 'Innodb_buffer_pool_reads':
-                    tempstatus['innodb_pool_reads'] = line[1]
-                    tempstatus['innodb_pool_reads_delta'] = int(line[1]) - int(_status['innodb_pool_reads'])
-
-            tempstatus['innodb_pool_read_hit'] = 1 - float(tempstatus['innodb_pool_reads'])/float(tempstatus['innodb_pool_read_requests'])
-            tempstatus['innodb_pool_read_hit_delta'] = 1 - float(tempstatus['innodb_pool_reads_delta'])/float(tempstatus['innodb_pool_read_requests_delta'])
+                    tempstatus[_metric_prefix + 'threads_running'] = line[1]
                         
-            #Acquire a lock and copy the temporary status dictionary
-            # to the global status dictionary.
+            #Acquire a lock and copy the temporary connection state dictionary
+            # to the global state dictionary.
             _glock.acquire()
             for tmpstatus in _status:
                 _status[tmpstatus] = tempstatus[tmpstatus]
             _glock.release()
             
+            #Wait for the refresh_rate period before collecting the netstat data again.
             if not self.shuttingdown:
                 time.sleep(_refresh_rate)
 
@@ -192,9 +163,9 @@ class NetstatThread(threading.Thread):
         self.running = False
 
 def metric_init(params):
-    '''Initialize the tcp connection status module and create the
+    '''Initialize the mysql status module and create the
     metric definition dictionary object for each metric.'''
-    global _refresh_rate, _WorkerThread, _host, _port, _user, _password, _cmd, descriptors
+    global _metric_prefix, _refresh_rate, _WorkerThread, _host, _port, _user, _password, _cmd, _status,descriptors
     
     #Read the refresh_rate from the gmond.conf parameters.
     if 'RefreshRate' in params:
@@ -212,7 +183,30 @@ def metric_init(params):
     if 'Password' in params:
         _password = params['Password']
 
-    _cmd = "/usr/local/mysql/bin/mysql -u" + _user + " -h" + _host + " -P" + _port + " -p" + _password + " -e 'show global status'" 
+    if 'Mysql' in params:
+	_cmd = params['Mysql'] + " -u" + _user + " -h" + _host + " -P" + _port + " -p" + _password + " -e 'show global status'" 
+    else:
+        _cmd = "/usr/local/mysql/bin/mysql -u" + _user + " -h" + _host + " -P" + _port + " -p" + _password + " -e 'show global status'" 
+    _metric_prefix = "mysql" + "_" + _host + "_" + _port + "_"
+
+    _status = {_metric_prefix +'queries': 0,
+        _metric_prefix +'queries_delta':0,
+        _metric_prefix + 'insert':0,
+        _metric_prefix + 'insert_delta':0,
+        _metric_prefix + 'select':0,
+        _metric_prefix + 'select_delta':0,
+        _metric_prefix + 'update':0,
+        _metric_prefix + 'update_delta':0,
+        _metric_prefix + 'delete':0,
+        _metric_prefix + 'delete_delta':0,
+        _metric_prefix + 'created_tmp_disk_tables':0,
+        _metric_prefix + 'created_tmp_disk_tables_delta':0,
+        _metric_prefix + 'created_tmp_files':0,
+        _metric_prefix + 'created_tmp_files_delta':0,
+        _metric_prefix + 'created_tmp_tables':0,
+        _metric_prefix + 'created_tmp_tables_delta':0,
+        _metric_prefix + 'threads_connected': 0,
+        _metric_prefix + 'threads_running':0}
 
     #create descriptors
     descriptors = []
@@ -221,73 +215,63 @@ def metric_init(params):
         'name'        : 'XXX',
         'call_back'   : mysql_status,
         'time_max'    : 30,
-        'value_type'  : 'float',
-        'format'      : '%.3f',
+        'value_type'  : 'uint',
+        'format'      : '%u',
         'units'       : 'XXX',
         'slope'       : 'both', # zero|positive|negative|both
         'description' : 'XXX',
-        'groups'      : 'mysql_'+ _host + '_' + _port,
+        'groups'      : 'mysql '+ _host + '_' + _port,
         }
 
     descriptors.append(create_desc(Desc_Skel,{
-			'name': 'queries_delta',
+			'name': _metric_prefix + 'queries_delta',
 			'units': 'count/s',
 			'description': 'mysql queries',
 			})) 
     descriptors.append(create_desc(Desc_Skel,{
-                        'name': 'select_delta',
+                        'name': _metric_prefix + 'select_delta',
                         'units': 'count/s',
                         'description': 'select_delta',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
-                        'name': 'update_delta',
+                        'name': _metric_prefix + 'update_delta',
                         'units': 'count/s',
                         'description': 'update_delta',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
-                        'name': 'delete_delta',
+                        'name': _metric_prefix + 'delete_delta',
                         'units': 'count/s',
                         'description': 'delete_delta',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
-                        'name': 'insert_delta',
+                        'name': _metric_prefix + 'insert_delta',
                         'units': 'count/s',
                         'description': 'insert_delta',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
-                        'name': 'created_tmp_disk_tables_delta',
+                        'name': _metric_prefix + 'created_tmp_disk_tables_delta',
                         'units': 'count/s',
                         'description': 'created_tmp_disk_tables_delta',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
-                        'name': 'created_tmp_tables_delta',
+                        'name': _metric_prefix + 'created_tmp_tables_delta',
                         'units': 'count/s',
                         'description': 'created_tmp_tables_delta',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
-                        'name': 'created_tmp_files_delta',
+                        'name': _metric_prefix + 'created_tmp_files_delta',
                         'units': 'count/s',
                         'description': 'created_tmp_files_delta',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
-                        'name': 'threads_connected',
+                        'name': _metric_prefix + 'threads_connected',
                         'units': 'count',
                         'description': 'thread_connected',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
-                        'name': 'threads_running',
+                        'name': _metric_prefix + 'threads_running',
                         'units': 'count',
                         'description': 'threads_running',
-                        }))
-    descriptors.append(create_desc(Desc_Skel,{
-                        'name': 'innodb_pool_read_hit',
-                        'units': '%',
-                        'description': 'innodb_pool_read_hit',
-                        }))
-    descriptors.append(create_desc(Desc_Skel,{
-                        'name': 'innodb_pool_read_hit_delta',
-                        'units': '%',
-                        'description': 'innodb_pool_read_hit_delta',
                         }))
     
     #Start the worker thread
@@ -304,13 +288,13 @@ def metric_cleanup():
 
 #This code is for debugging and unit testing    
 if __name__ == '__main__':
-    params = {'RefreshRate': '2','Host':'192.168.10.1',"Port":"3306","User":"xxxx","Password":"xxxxx"}
+    params = {'RefreshRate': '2','Host':'10.3.1.58',"Port":"33061","User":"monitor","Password":"monitor"}
     metric_init(params)
     while True:
         try:
             for d in descriptors:
                 v = d['call_back'](d['name'])
-                print 'value for %s is %.3f' % (d['name'],  v)
+                print 'value for %s is %u' % (d['name'],  v)
             time.sleep(2)
         except KeyboardInterrupt:
             os._exit(1)
