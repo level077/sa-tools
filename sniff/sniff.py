@@ -53,31 +53,6 @@ def decode_tcp_packet(s):
     d["window"] = socket.ntohs(struct.unpack('H',s[14:16])[0])
     d["checksum"] = socket.ntohs(socket.ntohs(struct.unpack('H',s[16:18])[0]))
     d["URG_POINT"] = socket.ntohs(struct.unpack('H',s[18:20])[0])
-    if d['header_len'] > 5:
-        option_length = 4 * (d["header_len"] - 5)
-        step = 20
-        while option_length > 0:
-           d["options_kind"] = ord(s[step])
-           if d["options_kind"] == 1:
-               option_length = option_length - 1
-               step = step + 1
-           if d["options_kind"] == 8:
-               option_length = option_length - 10
-               d["options_timestamp"] = socket.ntohl(struct.unpack('I',s[step+2:step+6])[0])
-               d["options_timestamp_echo"] = socket.ntohl(struct.unpack('I',s[step+6:step+10])[0])
-               step = step + 10
-           if d["options_kind"] == 2:
-              option_length = option_length - 4
-              d["options_mss"] = socket.ntohs(struct.unpack('H',s[step+2:step+4])[0])
-              step = step + 4
-           if d["options_kind"] == 3:
-              option_length = option_length - 3
-              d["options_window_factor"] = ord(s[step+2])
-              step = step + 3
-           if d["options_kind"] in [4,5,6,7]:
-              option_length = option_length - 2
-              d["options_sack"] = "True"
-              step = step + 2
     d['data'] = s[4*d['header_len']:]
     return d
 
@@ -96,6 +71,8 @@ def print_packet(pktlen, data, timestamp):
 				tcp_decoded["sport"],
                                 decoded['destination_address'],
 				tcp_decoded["dport"])
+	   print "ip total length: %d" % decoded['total_len']
+           print 'payload length: %d' % (decoded['total_len'] - 4*decoded['header_len'] - 4*tcp_decoded['header_len'])
     	   print 'seq:%d' % tcp_decoded["seq"]
            print 'acknowlege:%d' % tcp_decoded["acknowlege"]
            print 'URG:%d  ACK:%d  PSH:%d  RST:%d  SYN:%d  FIN:%d' % (tcp_decoded["URG"],tcp_decoded["ACK"],tcp_decoded["PSH"],tcp_decoded["RST"],tcp_decoded["SYN"],tcp_decoded["FIN"])
