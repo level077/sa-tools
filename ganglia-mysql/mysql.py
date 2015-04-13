@@ -143,6 +143,59 @@ class NetstatThread(threading.Thread):
                     tempstatus[_metric_prefix + 'threads_connected'] = line[1]
                 elif line[0] == 'Threads_running':
                     tempstatus[_metric_prefix + 'threads_running'] = line[1]
+		elif line[0] == 'Binlog_cache_disk_use':
+		    tempstatus[_metric_prefix + 'binlog_cache_disk_use'] = line[1]
+		    tempstatus[_metric_prefix + 'binlog_cache_disk_use_delta'] = (int(line[1])- int(_status[_metric_prefix + 'binlog_cache_disk_use']))/_refresh_rate
+		elif line[0] == 'Innodb_buffer_pool_reads':
+                    tempstatus[_metric_prefix + 'innodb_buffer_pool_reads'] = line[1]
+                    tempstatus[_metric_prefix + 'innodb_buffer_pool_reads_delta'] = (int(line[1])- int(_status[_metric_prefix + 'innodb_buffer_pool_reads']))/_refresh_rate
+		elif line[0] == 'Innodb_buffer_pool_wait_free':
+                    tempstatus[_metric_prefix + 'innodb_buffer_pool_wait_free'] = line[1]
+                    tempstatus[_metric_prefix + 'innodb_buffer_pool_wait_free_delta'] = (int(line[1])- int(_status[_metric_prefix + 'innodb_buffer_pool_wait_free']))/_refresh_rate
+		elif line[0] == 'Innodb_data_pending_fsyncs':
+                    tempstatus[_metric_prefix + 'innodb_data_pending_fsyncs'] = line[1]
+                    tempstatus[_metric_prefix + 'innodb_data_pending_fsyncs_delta'] = (int(line[1])- int(_status[_metric_prefix + 'innodb_data_pending_fsyncs']))/_refresh_rate
+		elif line[0] == 'Innodb_data_pending_reads':
+                    tempstatus[_metric_prefix + 'innodb_data_pending_reads'] = line[1]
+                    tempstatus[_metric_prefix + 'innodb_data_pending_reads_delta'] = (int(line[1])- int(_status[_metric_prefix + 'innodb_data_pending_reads']))/_refresh_rate
+		elif line[0] == 'Innodb_data_pending_writes':
+                    tempstatus[_metric_prefix + 'innodb_data_pending_writes'] = line[1]
+                    tempstatus[_metric_prefix + 'innodb_data_pending_writes_delta'] = (int(line[1])- int(_status[_metric_prefix + 'innodb_data_pending_writes']))/_refresh_rate
+		elif line[0] == 'Innodb_log_waits':
+                    tempstatus[_metric_prefix + 'innodb_log_waits'] = line[1]
+                    tempstatus[_metric_prefix + 'innodb_log_waits_delta'] = (int(line[1])- int(_status[_metric_prefix + 'innodb_log_waits']))/_refresh_rate
+		elif line[0] == 'Innodb_os_log_pending_fsyncs':
+                    tempstatus[_metric_prefix + 'innodb_os_log_pending_fsyncs'] = line[1]
+                    tempstatus[_metric_prefix + 'innodb_os_log_pending_fsyncs_delta'] = (int(line[1])- int(_status[_metric_prefix + 'innodb_os_log_pending_fsyncs']))/_refresh_rate
+		elif line[0] == 'Innodb_os_log_pending_writes':
+                    tempstatus[_metric_prefix + 'innodb_os_log_pending_writes'] = line[1]
+                    tempstatus[_metric_prefix + 'innodb_os_log_pending_writes_delta'] = (int(line[1])- int(_status[_metric_prefix + 'innodb_os_log_pending_writes']))/_refresh_rate
+		elif line[0] == 'Opened_tables':
+                    tempstatus[_metric_prefix + 'Opened_tables'] = line[1]
+		elif line[0] == 'Select_full_join':
+                    tempstatus[_metric_prefix + 'select_full_join'] = line[1]
+                    tempstatus[_metric_prefix + 'select_full_join_delta'] = (int(line[1])- int(_status[_metric_prefix + 'select_full_join']))/_refresh_rate
+		elif line[0] == 'Select_range_check':
+                    tempstatus[_metric_prefix + 'select_range_check'] = line[1]
+                    tempstatus[_metric_prefix + 'select_range_check_delta'] = (int(line[1])- int(_status[_metric_prefix + 'select_range_check']))/_refresh_rate
+		elif line[0] == 'Select_scan':
+                    tempstatus[_metric_prefix + 'select_scan'] = line[1]
+                    tempstatus[_metric_prefix + 'select_scan_delta'] = (int(line[1])- int(_status[_metric_prefix + 'select_scan']) - 1)/_refresh_rate
+		elif line[0] == 'Slow_queries':
+                    tempstatus[_metric_prefix + 'slow_queries'] = line[1]
+                    tempstatus[_metric_prefix + 'slow_queries_delta'] = (int(line[1])- int(_status[_metric_prefix + 'slow_queries']))/_refresh_rate
+		elif line[0] == 'Sort_merge_passes':
+                    tempstatus[_metric_prefix + 'sort_merge_passes'] = line[1]
+                    tempstatus[_metric_prefix + 'sort_merge_passes_delta'] = (int(line[1])- int(_status[_metric_prefix + 'sort_merge_passes']))/_refresh_rate
+		elif line[0] == 'Table_locks_waited':
+                    tempstatus[_metric_prefix + 'table_locks_waited'] = line[1]
+                    tempstatus[_metric_prefix + 'table_locks_waited_delta'] = (int(line[1])- int(_status[_metric_prefix + 'table_locks_waited']))/_refresh_rate
+		elif line[0] == 'Table_open_cache_misses':
+                    tempstatus[_metric_prefix + 'table_open_cache_misses'] = line[1]
+                    tempstatus[_metric_prefix + 'table_open_cache_misses_delta'] = (int(line[1])- int(_status[_metric_prefix + 'table_open_cache_misses']))/_refresh_rate
+		elif line[0] == 'Threads_created':
+                    tempstatus[_metric_prefix + 'threads_created'] = line[1]
+                    tempstatus[_metric_prefix + 'threads_created_delta'] = (int(line[1])- int(_status[_metric_prefix + 'threads_created']))/_refresh_rate
                         
             #Acquire a lock and copy the temporary connection state dictionary
             # to the global state dictionary.
@@ -206,7 +259,43 @@ def metric_init(params):
         _metric_prefix + 'created_tmp_tables':0,
         _metric_prefix + 'created_tmp_tables_delta':0,
         _metric_prefix + 'threads_connected': 0,
-        _metric_prefix + 'threads_running':0}
+        _metric_prefix + 'threads_running':0,
+	_metric_prefix + 'binlog_cache_disk_use':0,
+	_metric_prefix + 'binlog_cache_disk_use_delta':0,
+	_metric_prefix + 'innodb_buffer_pool_reads':0,
+	_metric_prefix + 'innodb_buffer_pool_reads_delta':0,
+	_metric_prefix + 'innodb_buffer_pool_wait_free':0,
+	_metric_prefix + 'innodb_buffer_pool_wait_free_delta':0,
+	_metric_prefix + 'innodb_data_pending_fsyncs':0,
+	_metric_prefix + 'innodb_data_pending_fsyncs_delta':0,
+	_metric_prefix + 'innodb_data_pending_reads':0,
+	_metric_prefix + 'innodb_data_pending_reads_delta':0,
+	_metric_prefix + 'innodb_data_pending_writes':0,
+	_metric_prefix + 'innodb_data_pending_writes_delta':0,
+	_metric_prefix + 'innodb_log_waits':0,
+	_metric_prefix + 'innodb_log_waits_delta':0,
+	_metric_prefix + 'innodb_os_log_pending_fsyncs':0,
+	_metric_prefix + 'innodb_os_log_pending_fsyncs_delta':0,
+	_metric_prefix + 'innodb_os_log_pending_writes':0,
+	_metric_prefix + 'innodb_os_log_pending_writes_delta':0,
+	_metric_prefix + 'opened_tables':0,
+	_metric_prefix + 'select_full_join':0,
+	_metric_prefix + 'select_full_join_delta':0,
+	_metric_prefix + 'select_range_check':0,
+	_metric_prefix + 'select_range_check_delta':0,
+	_metric_prefix + 'select_scan':0,
+	_metric_prefix + 'select_scan_delta':0,
+	_metric_prefix + 'slow_queries':0,
+	_metric_prefix + 'slow_queries_delta':0,
+	_metric_prefix + 'sort_merge_passes':0,
+	_metric_prefix + 'sort_merge_passes_delta':0,
+	_metric_prefix + 'table_locks_waited':0,
+	_metric_prefix + 'table_locks_waited_delta':0,
+	_metric_prefix + 'table_open_cache_misses':0,
+	_metric_prefix + 'table_open_cache_misses_delta':0,
+	_metric_prefix + 'threads_created':0,
+	_metric_prefix + 'threads_created_delta':0
+	}
 
     #create descriptors
     descriptors = []
@@ -221,57 +310,120 @@ def metric_init(params):
         'slope'       : 'both', # zero|positive|negative|both
         'description' : 'XXX',
         'groups'      : 'mysql '+ _host + '_' + _port,
+	'description' : 'http://dev.mysql.com/doc/refman/5.6/en/server-status-variables.html',
         }
 
     descriptors.append(create_desc(Desc_Skel,{
 			'name': _metric_prefix + 'queries_delta',
 			'units': 'count/s',
-			'description': 'mysql queries',
 			})) 
     descriptors.append(create_desc(Desc_Skel,{
                         'name': _metric_prefix + 'select_delta',
                         'units': 'count/s',
-                        'description': 'select_delta',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
                         'name': _metric_prefix + 'update_delta',
                         'units': 'count/s',
-                        'description': 'update_delta',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
                         'name': _metric_prefix + 'delete_delta',
                         'units': 'count/s',
-                        'description': 'delete_delta',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
                         'name': _metric_prefix + 'insert_delta',
                         'units': 'count/s',
-                        'description': 'insert_delta',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
                         'name': _metric_prefix + 'created_tmp_disk_tables_delta',
                         'units': 'count/s',
-                        'description': 'created_tmp_disk_tables_delta',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
                         'name': _metric_prefix + 'created_tmp_tables_delta',
                         'units': 'count/s',
-                        'description': 'created_tmp_tables_delta',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
                         'name': _metric_prefix + 'created_tmp_files_delta',
                         'units': 'count/s',
-                        'description': 'created_tmp_files_delta',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
                         'name': _metric_prefix + 'threads_connected',
                         'units': 'count',
-                        'description': 'thread_connected',
                         }))
     descriptors.append(create_desc(Desc_Skel,{
                         'name': _metric_prefix + 'threads_running',
                         'units': 'count',
-                        'description': 'threads_running',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'binlog_cache_disk_use_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'innodb_buffer_pool_reads_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'innodb_buffer_pool_wait_free_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'innodb_data_pending_fsyncs_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'innodb_data_pending_reads_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'innodb_data_pending_writes_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'innodb_log_waits_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'innodb_os_log_pending_fsyncs_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'innodb_os_log_pending_writes_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'opened_tables',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'select_full_join_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'select_range_check_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'select_scan_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'slow_queries_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'sort_merge_passes_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'table_locks_waited_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'table_open_cache_misses_delta',
+                        'units': 'count',
+                        }))
+    descriptors.append(create_desc(Desc_Skel,{
+                        'name': _metric_prefix + 'threads_created_delta',
+                        'units': 'count',
                         }))
     
     #Start the worker thread
