@@ -1,0 +1,22 @@
+modules {
+    module {
+        name = "mongodb"
+        language = "python"
+        param server_status {
+            value = "mongo --quiet --eval 'printjson(db.serverStatus())'"
+        }
+        param rs_status {
+            value = "mongo --quiet --eval 'printjson(rs.status())'"
+        }
+    }
+}
+
+collection_group {
+    collect_every = 10
+    time_threshold = 20
+    metric {
+	name_match = "mongodb_(.*)"
+    	name = "mongodb_\\1"
+    	value_threshold = 1.0
+    }
+}
