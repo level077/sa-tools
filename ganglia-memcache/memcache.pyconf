@@ -1,6 +1,6 @@
 modules {
   module {
-    name = "memcache
+    name = "memcache"
     language = "python"
     param RefreshRate {
         value = 2
