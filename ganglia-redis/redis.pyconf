@@ -1,0 +1,28 @@
+modules {
+  module {
+    name = "redis"
+    language = "python"
+    param RefreshRate {
+        value = 2
+    }
+    param Host {
+        value = "192.168.10.1"
+    }
+    param Port {
+	value = "11211"	
+    }
+    param Redis-cli {
+  	value = "/usr/local/bin/redis-cli"	
+    }
+  }
+}
+
+collection_group {
+  collect_every = 10
+  time_threshold = 20
+  metric {
+    name_match = "redis_(.*)"
+    name = "redis_\\1"
+    value_threshold = 1.0
+  }
+}
