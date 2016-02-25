@@ -23,3 +23,7 @@ numa.pl
 rename_db.sh
 -------------
 * 两个库之间的rename操作脚本
+
+server_info
+------------
+* 获取系统相关信息，来自于ansible set模块
