@@ -2,7 +2,7 @@
 
 ganglia-*
 --------------
-* ganglia监控模块，包括memcache，mysql，jvm GC等。
+* ganglia监控模块，包括memcache，mysql，jvm 等。
 
 sniff
 --------------
