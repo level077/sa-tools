@@ -27,3 +27,11 @@ rename_db.sh
 server_info
 ------------
 * 获取系统相关信息，来自于ansible set模块
+
+host2skydns.sh
+------------
+* 将/etc/hosts里相关的自定义域名，转换成可以直接注册到skydns中的url
+
+skydns2host.py
+------------
+* 将skydns中的自定义域名解析，转换成/etc/hosts文件中的配置格式
