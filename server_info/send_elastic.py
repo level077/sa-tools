@@ -21,7 +21,7 @@ def md5(info):
     m.update(info)
     return repr(m.digest())
 
-def is_changed(info):
+def is_changed(info,force):
     try:
         f = open("/tmp/.server_info")
     except IOError:
@@ -29,7 +29,7 @@ def is_changed(info):
     else:
     	last_digest = f.read()
     digest = md5(info)
-    if digest != last_digest:
+    if digest != last_digest or force:
         f = open("/tmp/.server_info",'w')
         f.write(digest)
         f.close()
@@ -43,6 +43,7 @@ if __name__ == "__main__":
     parser.add_argument("-i","--idc",help="idc name")
     parser.add_argument("-e","--elastic_host",help="elasticsearch server ip")
     parser.add_argument("-p","--elastic_port",help="elasticsearch server port")
+    parser.add_argument("-f","--force",action="store_true",help="force update")
     args = parser.parse_args()
     if args.idc:
         idc = args.idc
@@ -63,5 +64,5 @@ if __name__ == "__main__":
     server_info["idc"] = idc
     id = server_info["product_serial"]
     body = json.dumps(server_info)
-    if is_changed(body):
+    if is_changed(body,args.force):
         send_elastic(id,server_info,elastic_host,elastic_port)
