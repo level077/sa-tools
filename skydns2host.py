@@ -6,8 +6,8 @@ import httplib
 import sys
 import argparse
 
-def skydns2host(host,port,url):
-    conn = httplib.HTTPConnection(host,port)
+def skydns2host(ip,port,url):
+    conn = httplib.HTTPConnection(ip,port)
     conn.request('GET',url)
     response = conn.getresponse()
     data = response.read()
@@ -18,7 +18,7 @@ def skydns2host(host,port,url):
     if keys["node"].has_key("nodes"):
        for item in keys["node"]["nodes"]:
            if item.has_key("dir"):
-	       skydns2host(host,port,"/v2/keys" + item["key"])
+	       skydns2host(ip,port,"/v2/keys" + item["key"])
 	   elif item.has_key("value"):
 	       host = json.loads(item["value"])["host"]
 	       tmp = item["key"].split("/")
