@@ -4079,7 +4079,7 @@ def get_file_content(path, default=None):
 
 def ansible_facts(module):
     facts = {}
-    #facts.update(Facts().populate())
+    facts.update(Facts().populate())
     facts.update(Hardware().populate())
     facts.update(Network(module).populate())
     facts.update(Virtual().populate())
