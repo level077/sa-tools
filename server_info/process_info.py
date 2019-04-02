@@ -50,7 +50,7 @@ def get_centos_software():
       if s['name'] == 'nginx':
         s['cmdline'] = cmdline[3]
       else:
-        s['cmdline'] = cmdline[0].split()[0]
+        s['cmdline'] = cmdline[0].split()[0].split(":")[0]
     for c in proc.info['connections']:
       if c.status == "LISTEN":
         s['ports'].append(c.laddr.port)
@@ -58,8 +58,10 @@ def get_centos_software():
     if len(s['listen']) != 0 and len(s['cmdline']) !=0:
       s['ports'] = list(set(s['ports']))
       s['version'] = get_version(s['name'],s['cmdline'],s['ports'])
+      s['ports'] = tuple(s['ports'])
+      s['listen'] = tuple(s['listen'])
       software.append(s)
-  return software
+  return [dict(t) for t in set([tuple(d.items()) for d in software])]
 
 if __name__ == "__main__":
   info = get_centos_software()

@@ -7,6 +7,7 @@ import httplib
 import sys
 import hashlib
 import argparse
+import process_info
 
 def send_elastic(id,body,elastic_host,elastic_port):
     url = "/idc/server/" + id + "/_update"
@@ -62,6 +63,7 @@ if __name__ == "__main__":
         sys.exit(1)
     server_info = server_info.get_result()
     server_info["idc"] = idc
+    server_info["software"] = process_info.get_centos_software()
     id = server_info["product_serial"]
     body = json.dumps(server_info)
     if is_changed(body,args.force):
