@@ -2,67 +2,96 @@
 
 import psutil
 from subprocess import PIPE
+import rpm
 
-software = []
+process = []
+software = {}
+
+def get_software():
+  ts = rpm.TransactionSet()
+  mi = ts.dbMatch()
+  for h in mi:
+    software[h['name']] = {"version": h[rpm.RPMTAG_VERSION] + "-" + h[rpm.RPMTAG_RELEASE]}
 
 def get_version(name=None,cmdline=None,ports=None):
-  version = None
+  version = "Unknown"
   with psutil.Popen(["rpm", '-qf',cmdline], stdout=PIPE,stderr=PIPE) as p:
     p.wait(timeout=1)
     if p.returncode == 0:
-      version = p.communicate()[0].strip()
-      return version
-  if not version:
-    if name == 'nginx':
-      with psutil.Popen([cmdline,"-v"],stdout=PIPE,stderr=PIPE) as p:
-        p.wait(timeout=1)
-        if p.returncode == 0:
-          version = p.communicate()[1].split("/")[-1].strip()
-          return version
-    elif name == "redis-server":
-      with psutil.Popen([cmdline,"-v"],stdout=PIPE,stderr=PIPE) as p:
-        p.wait(timeout=1)
-        if p.returncode == 0:
-          version = p.communicate()[0].split()[2].split("=")[-1].strip()
-          return version
-    elif name == "etcd":
-      with psutil.Popen([cmdline,"-version"],stdout=PIPE,stderr=PIPE) as p:
-        p.wait(timeout=1)
-        if p.returncode == 0:
-          version = p.communicate()[0].split()[2].strip()
-          return version
-    elif name == "mysqld":
-      with psutil.Popen([cmdline,"--version"],stdout=PIPE,stderr=PIPE) as p:
-        p.wait(timeout=1)
-        if p.returncode == 0:
-          version = p.communicate()[0].split()[2].strip()
-          return version
-  return "Unknown" 
+      #version = p.communicate()[0].strip()
+      #return version
+      return
+  if name == 'nginx':
+    with psutil.Popen([cmdline,"-v"],stdout=PIPE,stderr=PIPE) as p:
+      p.wait(timeout=1)
+      if p.returncode == 0:
+        version = p.communicate()[1].split("/")[-1].strip()
+        #return version
+  elif name == "redis-server":
+    with psutil.Popen([cmdline,"-v"],stdout=PIPE,stderr=PIPE) as p:
+      p.wait(timeout=1)
+      if p.returncode == 0:
+        version = p.communicate()[0].split()[2].split("=")[-1].strip()
+        #return version
+  elif name == "etcd":
+    with psutil.Popen([cmdline,"-version"],stdout=PIPE,stderr=PIPE) as p:
+      p.wait(timeout=1)
+      if p.returncode == 0:
+        version = p.communicate()[0].split()[2].strip()
+        #return version
+  elif name == "mysqld":
+    with psutil.Popen([cmdline,"--version"],stdout=PIPE,stderr=PIPE) as p:
+      p.wait(timeout=1)
+      if p.returncode == 0:
+        version = p.communicate()[0].split()[2].strip()
+        #return version
+  elif name == "java":
+    with psutil.Popen([cmdline,"-version"],stdout=PIPE,stderr=PIPE) as p:
+      p.wait(timeout=1)
+      if p.returncode == 0:
+        version = p.communicate()[1].split('"')[1].strip()
+        #return version
+  if software.has_key(name):
+    software[name] = {"version": software[name]["version"] + "," + version}
+  else:
+    software[name] = {"version": version }
 
-def get_centos_software():
-  for proc in psutil.process_iter(attrs=['name','cmdline','connections']):
+def get_centos_process():
+  for proc in psutil.process_iter(attrs=['pid','name','cmdline','connections','create_time','username','ppid','exe','status']):
     s = {}
     s['name'] = proc.info['name']
+    s['exe'] = proc.info['exe']
+    s['username'] = proc.info['username']
+    s['create_time'] = proc.info['create_time']
+    s['pid'] = proc.info['pid']
+    s['status'] = proc.info['status']
+    try:
+      s['parent'] = psutil.Process(proc.info['ppid']).name()
+    except psutil.NoSuchProcess:
+      s['parent'] = 'NA'
     s['listen'] = []
     s['ports'] = []
-    cmdline = proc.info['cmdline']
-    if len(cmdline) != 0:
-      if s['name'] == 'nginx':
-        s['cmdline'] = cmdline[3]
-      else:
-        s['cmdline'] = cmdline[0].split()[0].split(":")[0]
+    s['cmdline'] = ' '.join(proc.info['cmdline'])
     for c in proc.info['connections']:
       if c.status == "LISTEN":
         s['ports'].append(c.laddr.port)
-        s['listen'].append(c.laddr.ip + ":" + str(c.laddr.port))
-    if len(s['listen']) != 0 and len(s['cmdline']) !=0:
-      s['ports'] = list(set(s['ports']))
-      s['version'] = get_version(s['name'],s['cmdline'],s['ports'])
-      s['ports'] = tuple(s['ports'])
-      s['listen'] = tuple(s['listen'])
-      software.append(s)
-  return [dict(t) for t in set([tuple(d.items()) for d in software])]
+        s['listen'].append(c.laddr.ip)
+    s['ports'] = tuple(set(s['ports']))
+    s['listen'] = tuple(set(s['listen']))
+    if len(s['cmdline']) != 0:
+      get_version(s['name'],s['exe'],s['ports'])
+      process.append(s)
+  #return [dict(t) for t in set([tuple(d.items()) for d in software])]
+  #get_software()
+  #return process, software
+
+def get_info():
+  get_centos_process()
+  get_software()
+  return process, software
 
 if __name__ == "__main__":
-  info = get_centos_software()
-  print(info)
+  pinfo, sinfo = get_info()
+  import json
+  #print(json.dumps(sinfo))
+  print(json.dumps(pinfo))
