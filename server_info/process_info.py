@@ -6,18 +6,19 @@ import rpm
 import errno
 
 process = []
-software = {}
+software = []
 
 def get_software():
   ts = rpm.TransactionSet()
   mi = ts.dbMatch()
   for h in mi:
-    if software.has_key(h['name']):
-      version = h[rpm.RPMTAG_VERSION] + "-" + h[rpm.RPMTAG_RELEASE]
-      if version not in software[h['name']]["version"]:
-        software[h['name']]["version"].append(version)
-    else:
-      software[h['name']] = {"version": [h[rpm.RPMTAG_VERSION] + "-" + h[rpm.RPMTAG_RELEASE]]}
+  #  if software.has_key(h['name']):
+  #    version = h[rpm.RPMTAG_VERSION] + "-" + h[rpm.RPMTAG_RELEASE]
+  #    if version not in software[h['name']]["version"]:
+  #      software[h['name']]["version"].append(version)
+  #  else:
+  #    software[h['name']] = {"version": [h[rpm.RPMTAG_VERSION] + "-" + h[rpm.RPMTAG_RELEASE]]}
+    software.append({"name":h['name'],"version":h[rpm.RPMTAG_VERSION] + "-" + h[rpm.RPMTAG_RELEASE]}) 
 
 def get_version(name=None,cmdline=None,ports=None):
   try:
@@ -65,11 +66,12 @@ def get_version(name=None,cmdline=None,ports=None):
         version = 'Permission denied'
     else:
         version = ('Unexpected error: %d', e.errno)
-  if software.has_key(name):
-    if version not in software[name]["version"]:
-      software[name]["version"].append(version)
-  else:
-    software[name] = {"version": [version] }
+  #if software.has_key(name):
+  #  if version not in software[name]["version"]:
+  #    software[name]["version"].append(version)
+  #else:
+  #  software[name] = {"version": [version] }
+  software.append({"name":name,"version":version})
 
 def get_centos_process():
   for proc in psutil.process_iter(attrs=['pid','name','cmdline','connections','create_time','username','ppid','exe','status']):

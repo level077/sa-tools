@@ -6,14 +6,22 @@ process_info.py
 --------------
 * 获取系统的进程信息及软件信息
 
+user_info.py
+--------------
+* 获取用户信息
+
 send_elastic.py
 --------------
-* 将server_info.py，process_info.py的json输出，update到elasticsearch集群。
+* 将server_info.py，process_info.py，user_info.py的json输出，update到elasticsearch集群。
 
 send2elastic.py
 --------------
-* 将server_info.py，process_info.py的json输出，index到elasticsearch集群。
+* 将server_info.py，process_info.py，user_info.py的json输出，index到elasticsearch集群。
+
+bulk_send_elastic.py
+---------------
+* 将server_info.py，process_info.py，user_info.py的json输出，index到elasticsearch集群。
 
 useage
 -------------
-* python send_elastic.py -i idc_name -e elastic_host -p elastic_port
+* python bulk_send_elastic.py -e elastic_host -p elastic_port
