@@ -8,7 +8,11 @@ process_info.py
 
 send_elastic.py
 --------------
-* 将server_info.py，process_info.py的json输出，发送到elasticsearch集群。
+* 将server_info.py，process_info.py的json输出，update到elasticsearch集群。
+
+send2elastic.py
+--------------
+* 将server_info.py，process_info.py的json输出，index到elasticsearch集群。
 
 useage
 -------------

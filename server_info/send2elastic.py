@@ -18,7 +18,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-e","--elastic_host",help="elasticsearch server ip")
     parser.add_argument("-p","--elastic_port",help="elasticsearch server port")
-    parser.add_argument("-f","--force",action="store_true",help="force update")
     args = parser.parse_args()
     if args.elastic_host:
         elastic_host = args.elastic_host
