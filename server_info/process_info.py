@@ -11,7 +11,12 @@ def get_software():
   ts = rpm.TransactionSet()
   mi = ts.dbMatch()
   for h in mi:
-    software[h['name']] = {"version": h[rpm.RPMTAG_VERSION] + "-" + h[rpm.RPMTAG_RELEASE]}
+    if software.has_key(h['name']):
+      version = h[rpm.RPMTAG_VERSION] + "-" + h[rpm.RPMTAG_RELEASE]
+      if version not in software[h['name']]["version"]:
+        software[h['name']]["version"].append(version)
+    else:
+      software[h['name']] = {"version": [h[rpm.RPMTAG_VERSION] + "-" + h[rpm.RPMTAG_RELEASE]]}
 
 def get_version(name=None,cmdline=None,ports=None):
   version = "Unknown"
@@ -52,9 +57,10 @@ def get_version(name=None,cmdline=None,ports=None):
         version = p.communicate()[1].split('"')[1].strip()
         #return version
   if software.has_key(name):
-    software[name] = {"version": software[name]["version"] + "," + version}
+    if version not in software[name]["version"]:
+      software[name]["version"].append(version)
   else:
-    software[name] = {"version": version }
+    software[name] = {"version": [version] }
 
 def get_centos_process():
   for proc in psutil.process_iter(attrs=['pid','name','cmdline','connections','create_time','username','ppid','exe','status']):
