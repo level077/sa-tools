@@ -23,38 +23,38 @@ def get_version(name=None,cmdline=None,ports=None):
   try:
     version = "Unknown"
     with psutil.Popen(["rpm", '-qf',cmdline], stdout=PIPE,stderr=PIPE) as p:
-      p.wait(timeout=1)
+      p.wait(timeout=10)
       if p.returncode == 0:
         #version = p.communicate()[0].strip()
         #return version
         return
     if name == 'nginx':
       with psutil.Popen([cmdline,"-v"],stdout=PIPE,stderr=PIPE) as p:
-        p.wait(timeout=1)
+        p.wait(timeout=10)
         if p.returncode == 0:
           version = p.communicate()[1].split("/")[-1].strip()
           #return version
     elif name == "redis-server":
       with psutil.Popen([cmdline,"-v"],stdout=PIPE,stderr=PIPE) as p:
-        p.wait(timeout=1)
+        p.wait(timeout=10)
         if p.returncode == 0:
           version = p.communicate()[0].split()[2].split("=")[-1].strip()
           #return version
     elif name == "etcd":
       with psutil.Popen([cmdline,"-version"],stdout=PIPE,stderr=PIPE) as p:
-        p.wait(timeout=1)
+        p.wait(timeout=10)
         if p.returncode == 0:
           version = p.communicate()[0].split()[2].strip()
           #return version
     elif name == "mysqld":
       with psutil.Popen([cmdline,"--version"],stdout=PIPE,stderr=PIPE) as p:
-        p.wait(timeout=1)
+        p.wait(timeout=10)
         if p.returncode == 0:
           version = p.communicate()[0].split()[2].strip()
           #return version
     elif name == "java":
       with psutil.Popen([cmdline,"-version"],stdout=PIPE,stderr=PIPE) as p:
-        p.wait(timeout=1)
+        p.wait(timeout=10)
         if p.returncode == 0:
           version = p.communicate()[1].split('"')[1].strip()
           #return version
