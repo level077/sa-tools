@@ -98,7 +98,6 @@ def get_centos_process():
         s['listen'].append(c.laddr.ip)
     s['ports'] = tuple(set(s['ports']))
     s['listen'] = tuple(set(s['listen']))
-    #内核进程，以及name和exe不一致的进程不考虑在内
     if len(s['cmdline']) != 0 and s['exe'] and os.path.basename(s['exe']) == s['name']:
       get_version(s['name'],s['exe'],s['ports'])
       process.append(s)
