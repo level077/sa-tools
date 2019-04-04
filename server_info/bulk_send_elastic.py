@@ -57,6 +57,6 @@ if __name__ == "__main__":
     ip = server["default_ipv4"]["address"]
     bulk_send(body=process,index="process",doc_type="process",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port,product_serial=product_serial,hostname=hostname,ip=ip)
     bulk_send(body=software,index="software",doc_type="software",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port,product_serial=product_serial,hostname=hostname,ip=ip)
+    bulk_send(body=user,index="user",doc_type="user",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port,product_serial=product_serial,hostname=hostname,ip=ip)
     send_elastic(body=server,index="server",doc_type="server",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port)
-    send_elastic(body=user,index="server",doc_type="server",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port)
     #print(json.dumps(server_info))
