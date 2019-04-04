@@ -1,2 +1,4 @@
 psutil
 requests
+urllib3
+pyOpenSSL

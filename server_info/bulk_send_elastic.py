@@ -12,6 +12,7 @@ import requests
 
 def bulk_send(body=None,ts=None,elastic_host=None,elastic_port=None,product_serial=None,hostname=None,ip=None,index=None,doc_type=None):
     url = "http://"+ elastic_host + ":" + elastic_port + "/_bulk"
+    headers = {"Content-Type":"application/x-ndjson"}
     payload = []
     meta = {"index":{"_index":index,"_type":doc_type}}
     for p in body:
@@ -22,13 +23,14 @@ def bulk_send(body=None,ts=None,elastic_host=None,elastic_port=None,product_seri
       payload.append(json.dumps(meta))
       payload.append(json.dumps(p))
     pl = "\n".join(payload) + "\n"
-    r = requests.post(url, data=pl)
+    r = requests.post(url, data=pl,headers=headers)
     print(r.status_code)
 
 def send_elastic(body=None,ts=None,elastic_host=None,elastic_port=None,index=None,doc_type=None):
     url = "http://"+ elastic_host + ":" + elastic_port + "/"+index+"/"+doc_type+"/"
+    headers = {"Content-Type":"application/x-ndjson"}
     body["@timestamp"] = ts
-    r = requests.post(url, data=json.dumps(body))
+    r = requests.post(url, data=json.dumps(body),headers=headers)
     print(r.status_code)
 
 if __name__ == "__main__":
