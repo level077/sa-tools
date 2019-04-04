@@ -4,6 +4,7 @@ import psutil
 from subprocess import PIPE
 import rpm
 import errno
+import os
 
 process = []
 software = []
@@ -29,6 +30,8 @@ def get_version(name=None,cmdline=None,ports=None):
         #version = p.communicate()[0].strip()
         #return version
         return
+    #if  cmdline and os.path.basename(cmdline) != name:
+    #  return 
     if name == 'nginx':
       with psutil.Popen([cmdline,"-v"],stdout=PIPE,stderr=PIPE) as p:
         p.wait(timeout=10)
@@ -95,7 +98,8 @@ def get_centos_process():
         s['listen'].append(c.laddr.ip)
     s['ports'] = tuple(set(s['ports']))
     s['listen'] = tuple(set(s['listen']))
-    if len(s['cmdline']) != 0:
+    #内核进程，以及name和exe不一致的进程不考虑在内
+    if len(s['cmdline']) != 0 and s['exe'] and os.path.basename(s['exe']) == s['name']:
       get_version(s['name'],s['exe'],s['ports'])
       process.append(s)
   #return [dict(t) for t in set([tuple(d.items()) for d in software])]
@@ -110,5 +114,5 @@ def get_info():
 if __name__ == "__main__":
   pinfo, sinfo = get_info()
   import json
-  #print(json.dumps(sinfo))
-  print(json.dumps(pinfo))
+  print(json.dumps(sinfo))
+  #print(json.dumps(pinfo))
