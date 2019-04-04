@@ -28,7 +28,7 @@ def bulk_send(body=None,ts=None,elastic_host=None,elastic_port=None,product_seri
 
 def send_elastic(body=None,ts=None,elastic_host=None,elastic_port=None,index=None,doc_type=None):
     url = "http://"+ elastic_host + ":" + elastic_port + "/"+index+"/"+doc_type+"/"
-    headers = {"Content-Type":"application/x-ndjson"}
+    headers = {"Content-Type":"application/json"}
     body["@timestamp"] = ts
     r = requests.post(url, data=json.dumps(body),headers=headers)
     print(r.status_code)
@@ -48,14 +48,15 @@ if __name__ == "__main__":
     else:
         print "need elasticsearch port"
         sys.exit(1)
-    server_info = server_info.get_result()
-    process_info,software_info = process_info.get_info()
-    user_info = user_info.get_user()
+    server = server_info.get_result()
+    process,software = process_info.get_info()
+    user = user_info.get_user()
     ts = datetime.datetime.utcnow().isoformat()
-    product_serial = server_info["product_serial"]
-    hostname = server_info["hostname"]
-    ip = server_info["default_ipv4"]["address"]
-    bulk_send(body=process_info,index="process",doc_type="process",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port,product_serial=product_serial,hostname=hostname,ip=ip)
-    bulk_send(body=software_info,index="software",doc_type="software",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port,product_serial=product_serial,hostname=hostname,ip=ip)
-    send_elastic(body=server_info,index="server",doc_type="server",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port)
+    product_serial = server["product_serial"]
+    hostname = server["hostname"]
+    ip = server["default_ipv4"]["address"]
+    bulk_send(body=process,index="process",doc_type="process",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port,product_serial=product_serial,hostname=hostname,ip=ip)
+    bulk_send(body=software,index="software",doc_type="software",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port,product_serial=product_serial,hostname=hostname,ip=ip)
+    send_elastic(body=server,index="server",doc_type="server",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port)
+    send_elastic(body=user,index="server",doc_type="server",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port)
     #print(json.dumps(server_info))

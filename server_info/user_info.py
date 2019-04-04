@@ -5,24 +5,22 @@ import spwd
 import grp
 import datetime
 
-user = {}
+user = []
 
 def serial_date_to_string(srl_no):
     new_date = datetime.datetime(1970,1,1,0,0) + datetime.timedelta(srl_no - 1)
     return new_date.strftime("%Y-%m-%d")
 
-
 def get_user():
   for p in pwd.getpwall():
-    user[p.pw_name] = {"uid":p.pw_uid,"group":grp.getgrgid(p.pw_gid).gr_name}
+    tmp = {"user":p.pw_name,"uid":p.pw_uid,"group":grp.getgrgid(p.pw_gid).gr_name}
     if spwd.getspnam(p.pw_name).sp_expire == -1:
-      user[p.pw_name]["expire"] = "Never"
+      tmp["expire"] = "Never"
     else:
-      user[p.pw_name]["expire"] = serial_date_to_string(spwd.getspnam(p.pw_name).sp_expire)
+      tmp["expire"] = serial_date_to_string(spwd.getspnam(p.pw_name).sp_expire)
+    user.append(tmp)
   return user
 
 if __name__ == "__main__":
   uinfo = get_user()
   print(uinfo)
-  
-
