@@ -10,7 +10,7 @@ import argparse
 import datetime
 import requests
 
-def bulk_send(body=None,ts=None,elastic_host=None,elastic_port=None,product_serial=None,hostname=None,ip=None,index=None,doc_type=None):
+def bulk_send(body=None,ts=None,elastic_host=None,elastic_port=None,product_serial=None,hostname=None,ip=None,product_uuid=None,index=None,doc_type=None):
     url = "http://"+ elastic_host + ":" + elastic_port + "/_bulk"
     headers = {"Content-Type":"application/x-ndjson"}
     payload = []
@@ -18,6 +18,7 @@ def bulk_send(body=None,ts=None,elastic_host=None,elastic_port=None,product_seri
     for p in body:
       p["@timestamp"] = ts
       p["product_serial"] = product_serial
+      p["product_uuid"] = product_uuid
       p["hostname"] = hostname
       p["ip"] = ip
       payload.append(json.dumps(meta))
@@ -53,10 +54,11 @@ if __name__ == "__main__":
     user = user_info.get_user()
     ts = datetime.datetime.utcnow().isoformat()
     product_serial = server["product_serial"]
+    product_uuid = server["product_uuid"]
     hostname = server["hostname"]
     ip = server["default_ipv4"]["address"]
-    bulk_send(body=process,index="process",doc_type="process",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port,product_serial=product_serial,hostname=hostname,ip=ip)
-    bulk_send(body=software,index="software",doc_type="software",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port,product_serial=product_serial,hostname=hostname,ip=ip)
-    bulk_send(body=user,index="user",doc_type="user",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port,product_serial=product_serial,hostname=hostname,ip=ip)
+    bulk_send(body=process,index="process",doc_type="process",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port,product_serial=product_serial,hostname=hostname,ip=ip,product_uuid=product_uuid)
+    bulk_send(body=software,index="software",doc_type="software",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port,product_serial=product_serial,hostname=hostname,ip=ip,product_uuid=product_uuid)
+    bulk_send(body=user,index="user",doc_type="user",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port,product_serial=product_serial,hostname=hostname,ip=ip,product_uuid=product_uuid)
     send_elastic(body=server,index="server",doc_type="server",ts=ts,elastic_host=elastic_host,elastic_port=elastic_port)
     #print(json.dumps(server_info))
