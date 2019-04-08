@@ -2352,7 +2352,7 @@ class LinuxHardware(Hardware):
                     #'form_factor': '/sys/devices/virtual/dmi/id/chassis_type',
                     'product_name': '/sys/devices/virtual/dmi/id/product_name',
                     'product_serial': '/sys/devices/virtual/dmi/id/product_serial',
-                    #'product_uuid': '/sys/devices/virtual/dmi/id/product_uuid',
+                    'product_uuid': '/sys/devices/virtual/dmi/id/product_uuid',
                     #'product_version': '/sys/devices/virtual/dmi/id/product_version',
                     'system_vendor': '/sys/devices/virtual/dmi/id/sys_vendor'
                     }
@@ -2379,7 +2379,7 @@ class LinuxHardware(Hardware):
                     #'form_factor': 'chassis-type',
                     'product_name': 'system-product-name',
                     'product_serial': 'system-serial-number',
-                    #'product_uuid': 'system-uuid',
+                    'product_uuid': 'system-uuid',
                     #'product_version': 'system-version',
                     'system_vendor': 'system-manufacturer'
                     }
